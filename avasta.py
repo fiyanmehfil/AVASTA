@@ -175,7 +175,7 @@ def decompile_apk(apk_file, app_name):
 def check_dependencies():
     # Define a list of required tools and packages
     required_tools = ["apktool"]
-    required_packages = ["python3", "tabulate"]
+    required_packages = ["tabulate"]
 
     for tool in required_tools:
         try:
