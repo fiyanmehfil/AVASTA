@@ -1,2 +1,2 @@
-# AVASTA
+# AVASTA - ANDROID VULNERABILITY ASSESSMENT and SECURITY TESTING AID
 Android app vulnerability scanner
