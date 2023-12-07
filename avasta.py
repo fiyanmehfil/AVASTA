@@ -1,6 +1,5 @@
 import re
 import os
-import argparse
 import subprocess
 from prettytable import PrettyTable
 
@@ -9,11 +8,12 @@ GREEN = "\033[92m"
 RESET = "\033[0m"
 
 # Define patterns for potential secrets (you can extend this list)
-secret_patterns = ["api_key", "password", "secret_key"]
+secret_patterns = {
+    "api_key": r"['\"]api[_-]?key['\"]\s*:\s*[\"']?[a-zA-Z0-9]+[\"']?",
+    "password": r"['\"]password['\"]\s*:\s*[\"']?[a-zA-Z0-9]+[\"']?"}
 secret_mitigations = {
     "api_key": "Store API keys securely using environment variables.",
-    "password": "Implement strong password hashing and storage practices.",
-    "secret_key": "Use a secure vault or secret management system for secret keys.",
+    "password": "Implement strong password hashing and storage practices."
 }
 
 # Define patterns for insecure data storage
@@ -76,16 +76,19 @@ broken_auth_mitigations = {
 }
 
 # Define patterns for potentially risky files
-risk_file_patterns = ["backup.db", "config.properties", "secrets.xml"]
+risk_file_patterns = {"Database Dump": r"\.sql$",
+                      "Backup File": r"\.bak$|\.backup$",
+                      "Config File": r"\.config$|\.cfg$",
+                      "Log File": r"\.log$"}
 risk_file_mitigations = {
-    "backup.db": "Avoid storing sensitive data in backup files.",
-    "config.properties": "Ensure that configuration files are not accessible to unauthorized users.",
-    "secrets.xml": "Securely store secrets and encryption keys, and protect XML files from unauthorized access.",
+    "Database Dump": "Review and restrict access to database dump files. Avoid storing sensitive data in plaintext.",
+    "Backup File": "Encrypt backup files and store them securely. Regularly audit and remove unnecessary backups.",
+    "Config File": "Secure configuration files. Avoid storing sensitive information in plaintext; use encryption if necessary.",
+    "Log File": "Implement proper log management practices. Ensure sensitive information is not logged."
 }
 
 # Define patterns for code quality
 code_quality_patterns = ["Landroid/util/Log;->e\\(Ljava/lang/String;Ljava/lang/String;\\)", "Landroid/util/Log;->w\\(Ljava/lang/String;Ljava/lang/String;\\)"]
-
 code_quality_mitigations = {
     "Landroid/util/Log;->e\\(Ljava/lang/String;Ljava/lang/String;\\)": "Avoid using Log.e() for non-error logs in production code.",
     "Landroid/util/Log;->w\\(Ljava/lang/String;Ljava/lang/String;\\)": "Avoid using Log.w() for non-warning logs in production code.",
